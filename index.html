@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏢 PROJETO ARQUITETÔNICO - ESPAÇO TECH | 10m de frente</title>
+    <title>🏢 PROJETO ARQUITETÔNICO - ESPAÇO TECH (ESCALA REAL)</title>
     <style>
         body {
             margin: 0;
@@ -236,8 +236,9 @@
                 <tr><td>Recepção:</td><td>4.00 x 3.00 m</td></tr>
                 <tr><td>Gerência:</td><td>3.00 x 3.00 m</td></tr>
                 <tr><td>Cada Ilha:</td><td>3.60 x 2.20 m</td></tr>
-                <tr><td>Mesa Individual:</td><td>1.20 x 0.70 m</td></tr>
-                <tr><td>Corredores:</td><td>1.80 m</td></tr>
+                <tr><td>Corredor frontal:</td><td>1.50 m</td></tr>
+                <tr><td>Corredor entre ilhas:</td><td>1.50 m</td></tr>
+                <tr><td>Corredor lateral:</td><td>0.80 m</td></tr>
             </table>
         </div>
         
@@ -326,12 +327,9 @@
         controls.target.set(5, 1.5, 6);
         
         // ==================== ILUMINAÇÃO PROFISSIONAL ====================
-        
-        // Luz ambiente suave
         const ambientLight = new THREE.AmbientLight(0x404060);
         scene.add(ambientLight);
         
-        // Luz principal (simulando luz natural do teto)
         const mainLight = new THREE.DirectionalLight(0xffeedd, 1);
         mainLight.position.set(5, 10, 5);
         mainLight.castShadow = true;
@@ -347,7 +345,6 @@
         mainLight.shadow.bias = -0.0005;
         scene.add(mainLight);
         
-        // Luzes de preenchimento coloridas
         const fillLight1 = new THREE.PointLight(0x4466ff, 0.5);
         fillLight1.position.set(2, 3, 2);
         scene.add(fillLight1);
@@ -371,8 +368,7 @@
         }
         
         // ==================== ELEMENTOS DE REFERÊNCIA ====================
-        
-        // Piso principal com textura de porcelanato
+        // Piso principal (10m x 12m)
         const pisoGeometry = new THREE.PlaneGeometry(10, 12);
         const pisoMaterial = new THREE.MeshStandardMaterial({ 
             color: 0x2a2a3a,
@@ -382,182 +378,143 @@
         });
         const piso = new THREE.Mesh(pisoGeometry, pisoMaterial);
         piso.rotation.x = -Math.PI / 2;
-        piso.position.set(5, 0, 6);
+        piso.position.set(5, 0, 6); // centro em (5, 6)
         piso.receiveShadow = true;
         scene.add(piso);
         
-        // Grid técnico (para referência de escala)
-        const gridHelper = new THREE.GridHelper(12, 24, 0x00ffff, 0x336699);
+        // Grid em metros (linhas a cada 1m)
+        const gridHelper = new THREE.GridHelper(12, 12, 0x00ffff, 0x336699);
         gridHelper.position.set(5, 0.01, 6);
         scene.add(gridHelper);
         
-        // Paredes (apenas contorno para não obstruir visão)
+        // Paredes externas (contorno)
         const wallMaterial = new THREE.LineBasicMaterial({ color: 0x4a6c8f });
         
-        // Paredes laterais
-        const wallLeftPoints = [
-            new THREE.Vector3(0, 0, 0),
-            new THREE.Vector3(0, 3.5, 0),
-            new THREE.Vector3(0, 3.5, 12),
-            new THREE.Vector3(0, 0, 12),
-            new THREE.Vector3(0, 0, 0)
-        ];
-        const wallLeftLine = new THREE.Line(
-            new THREE.BufferGeometry().setFromPoints(wallLeftPoints),
-            wallMaterial
-        );
-        scene.add(wallLeftLine);
+        const wallLeftPoints = [new THREE.Vector3(0,0,0), new THREE.Vector3(0,3.5,0), new THREE.Vector3(0,3.5,12), new THREE.Vector3(0,0,12), new THREE.Vector3(0,0,0)];
+        scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(wallLeftPoints), wallMaterial));
         
-        const wallRightPoints = [
-            new THREE.Vector3(10, 0, 0),
-            new THREE.Vector3(10, 3.5, 0),
-            new THREE.Vector3(10, 3.5, 12),
-            new THREE.Vector3(10, 0, 12),
-            new THREE.Vector3(10, 0, 0)
-        ];
-        const wallRightLine = new THREE.Line(
-            new THREE.BufferGeometry().setFromPoints(wallRightPoints),
-            wallMaterial
-        );
-        scene.add(wallRightLine);
+        const wallRightPoints = [new THREE.Vector3(10,0,0), new THREE.Vector3(10,3.5,0), new THREE.Vector3(10,3.5,12), new THREE.Vector3(10,0,12), new THREE.Vector3(10,0,0)];
+        scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(wallRightPoints), wallMaterial));
         
-        // Parede do fundo
-        const wallBackPoints = [
-            new THREE.Vector3(0, 0, 12),
-            new THREE.Vector3(0, 3.5, 12),
-            new THREE.Vector3(10, 3.5, 12),
-            new THREE.Vector3(10, 0, 12),
-            new THREE.Vector3(0, 0, 12)
-        ];
-        const wallBackLine = new THREE.Line(
-            new THREE.BufferGeometry().setFromPoints(wallBackPoints),
-            wallMaterial
-        );
-        scene.add(wallBackLine);
+        const wallBackPoints = [new THREE.Vector3(0,0,12), new THREE.Vector3(0,3.5,12), new THREE.Vector3(10,3.5,12), new THREE.Vector3(10,0,12), new THREE.Vector3(0,0,12)];
+        scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(wallBackPoints), wallMaterial));
+        
+        const wallFrontPoints = [new THREE.Vector3(0,0,0), new THREE.Vector3(0,3.5,0), new THREE.Vector3(10,3.5,0), new THREE.Vector3(10,0,0), new THREE.Vector3(0,0,0)];
+        scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(wallFrontPoints), wallMaterial));
+        
+        // ==================== PAREDE DIVISÓRIA ====================
+        // Parede transversal na posição Z = 3.5, separando recepção/gerência das ilhas
+        // Será uma parede de vidro semi-transparente para não obstruir a visão
+        const divisoriaMaterial = new THREE.MeshPhongMaterial({ color: 0x88aaff, transparent: true, opacity: 0.3, side: THREE.DoubleSide });
+        const divisoriaGeo = new THREE.BoxGeometry(10, 3.5, 0.2); // largura total, altura até o teto
+        const divisoria = new THREE.Mesh(divisoriaGeo, divisoriaMaterial);
+        divisoria.position.set(5, 1.75, 3.5); // centro em Z=3.5
+        divisoria.castShadow = true;
+        divisoria.receiveShadow = true;
+        scene.add(divisoria);
+        
+        // Adicionar uma moldura para destacar
+        const molduraMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
+        const molduraGeo = new THREE.EdgesGeometry(divisoriaGeo);
+        const moldura = new THREE.LineSegments(molduraGeo, molduraMaterial);
+        moldura.position.copy(divisoria.position);
+        scene.add(moldura);
         
         // ==================== FUNÇÕES DE CRIAÇÃO DE MÓVEIS ====================
+        // (as funções createCadeira, createComputador, createMesa, createIlha, createRecepcao, createGerencia são as mesmas do código original,
+        //  apenas ajustamos as posições das ilhas e dos módulos da frente)
         
-        // Função para criar cadeira ergonômica profissional
         function createCadeira(x, z, cor = 0x333333) {
             const group = new THREE.Group();
-            
             // Base com rodízios
             const baseGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.05, 8);
             const baseMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.4, metalness: 0.6 });
             const base = new THREE.Mesh(baseGeo, baseMat);
             base.position.y = 0.025;
-            base.castShadow = true;
-            base.receiveShadow = true;
+            base.castShadow = true; base.receiveShadow = true;
             group.add(base);
             
-            // Coluna central
             const colunaGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.4, 8);
             const colunaMat = new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.3, metalness: 0.7 });
             const coluna = new THREE.Mesh(colunaGeo, colunaMat);
             coluna.position.y = 0.225;
-            coluna.castShadow = true;
-            coluna.receiveShadow = true;
+            coluna.castShadow = true; coluna.receiveShadow = true;
             group.add(coluna);
             
-            // Assento
             const assentoGeo = new THREE.BoxGeometry(0.5, 0.1, 0.5);
             const assentoMat = new THREE.MeshStandardMaterial({ color: cor, roughness: 0.8 });
             const assento = new THREE.Mesh(assentoGeo, assentoMat);
             assento.position.y = 0.45;
-            assento.castShadow = true;
-            assento.receiveShadow = true;
+            assento.castShadow = true; assento.receiveShadow = true;
             group.add(assento);
             
-            // Encosto
             const encostoGeo = new THREE.BoxGeometry(0.5, 0.5, 0.1);
             const encostoMat = new THREE.MeshStandardMaterial({ color: cor, roughness: 0.8 });
             const encosto = new THREE.Mesh(encostoGeo, encostoMat);
             encosto.position.set(0, 0.7, -0.2);
-            encosto.castShadow = true;
-            encosto.receiveShadow = true;
+            encosto.castShadow = true; encosto.receiveShadow = true;
             group.add(encosto);
             
-            // Braços
             const bracoGeo = new THREE.BoxGeometry(0.1, 0.1, 0.4);
             const bracoMat = new THREE.MeshStandardMaterial({ color: 0x666666, roughness: 0.5, metalness: 0.5 });
-            
             const bracoEsq = new THREE.Mesh(bracoGeo, bracoMat);
             bracoEsq.position.set(-0.3, 0.55, 0);
-            bracoEsq.castShadow = true;
-            bracoEsq.receiveShadow = true;
+            bracoEsq.castShadow = true; bracoEsq.receiveShadow = true;
             group.add(bracoEsq);
-            
             const bracoDir = new THREE.Mesh(bracoGeo, bracoMat);
             bracoDir.position.set(0.3, 0.55, 0);
-            bracoDir.castShadow = true;
-            bracoDir.receiveShadow = true;
+            bracoDir.castShadow = true; bracoDir.receiveShadow = true;
             group.add(bracoDir);
             
             group.position.set(x, 0, z);
             return group;
         }
         
-        // Função para criar computador ultra-realista
         function createComputador(x, z, rotacao = 0) {
             const group = new THREE.Group();
             
-            // Monitor
             const monitorBaseGeo = new THREE.BoxGeometry(0.5, 0.35, 0.1);
             const monitorBaseMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.3, metalness: 0.2 });
             const monitorBase = new THREE.Mesh(monitorBaseGeo, monitorBaseMat);
             monitorBase.position.y = 0.35;
-            monitorBase.castShadow = true;
-            monitorBase.receiveShadow = true;
+            monitorBase.castShadow = true; monitorBase.receiveShadow = true;
             group.add(monitorBase);
             
-            // Tela
             const telaGeo = new THREE.BoxGeometry(0.45, 0.3, 0.02);
-            const telaMat = new THREE.MeshStandardMaterial({ 
-                color: 0x88aaff, 
-                emissive: 0x224466,
-                emissiveIntensity: 0.5
-            });
+            const telaMat = new THREE.MeshStandardMaterial({ color: 0x88aaff, emissive: 0x224466, emissiveIntensity: 0.5 });
             const tela = new THREE.Mesh(telaGeo, telaMat);
             tela.position.set(0, 0.35, 0.06);
             tela.castShadow = true;
             group.add(tela);
             
-            // Base do monitor
             const baseMonitorGeo = new THREE.BoxGeometry(0.2, 0.1, 0.15);
             const baseMonitorMat = new THREE.MeshStandardMaterial({ color: 0x333333 });
             const baseMonitor = new THREE.Mesh(baseMonitorGeo, baseMonitorMat);
             baseMonitor.position.y = 0.2;
             baseMonitor.position.z = 0.03;
-            baseMonitor.castShadow = true;
-            baseMonitor.receiveShadow = true;
+            baseMonitor.castShadow = true; baseMonitor.receiveShadow = true;
             group.add(baseMonitor);
             
-            // Teclado
             const tecladoGeo = new THREE.BoxGeometry(0.4, 0.05, 0.15);
             const tecladoMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
             const teclado = new THREE.Mesh(tecladoGeo, tecladoMat);
             teclado.position.set(0, 0.15, -0.15);
-            teclado.castShadow = true;
-            teclado.receiveShadow = true;
+            teclado.castShadow = true; teclado.receiveShadow = true;
             group.add(teclado);
             
-            // Mouse
             const mouseGeo = new THREE.SphereGeometry(0.05, 8);
             const mouseMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
             const mouse = new THREE.Mesh(mouseGeo, mouseMat);
             mouse.position.set(0.2, 0.1, -0.2);
             mouse.scale.set(1, 0.5, 1);
-            mouse.castShadow = true;
-            mouse.receiveShadow = true;
+            mouse.castShadow = true; mouse.receiveShadow = true;
             group.add(mouse);
             
-            // CPU (torre)
             const cpuGeo = new THREE.BoxGeometry(0.2, 0.4, 0.2);
             const cpuMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a });
             const cpu = new THREE.Mesh(cpuGeo, cpuMat);
             cpu.position.set(-0.3, 0.2, 0.2);
-            cpu.castShadow = true;
-            cpu.receiveShadow = true;
+            cpu.castShadow = true; cpu.receiveShadow = true;
             group.add(cpu);
             
             group.position.set(x, 0, z);
@@ -565,101 +522,81 @@
             return group;
         }
         
-        // Função para criar mesa profissional
         function createMesa(x, z, largura = 1.6, profundidade = 0.8, cor = 0x8B4513) {
             const group = new THREE.Group();
             
-            // Tampo da mesa
             const tampoGeo = new THREE.BoxGeometry(largura, 0.05, profundidade);
             const tampoMat = new THREE.MeshStandardMaterial({ color: cor, roughness: 0.6, metalness: 0.1 });
             const tampo = new THREE.Mesh(tampoGeo, tampoMat);
             tampo.position.y = 0.75;
-            tampo.castShadow = true;
-            tampo.receiveShadow = true;
+            tampo.castShadow = true; tampo.receiveShadow = true;
             group.add(tampo);
             
-            // Pernas (4)
             const pernaGeo = new THREE.BoxGeometry(0.1, 0.75, 0.1);
             const pernaMat = new THREE.MeshStandardMaterial({ color: 0x666666, roughness: 0.4, metalness: 0.5 });
-            
             const posPernas = [
                 [-largura/2 + 0.15, 0.375, -profundidade/2 + 0.15],
                 [largura/2 - 0.15, 0.375, -profundidade/2 + 0.15],
                 [-largura/2 + 0.15, 0.375, profundidade/2 - 0.15],
                 [largura/2 - 0.15, 0.375, profundidade/2 - 0.15]
             ];
-            
             posPernas.forEach(pos => {
                 const perna = new THREE.Mesh(pernaGeo, pernaMat);
                 perna.position.set(pos[0], pos[1], pos[2]);
-                perna.castShadow = true;
-                perna.receiveShadow = true;
+                perna.castShadow = true; perna.receiveShadow = true;
                 group.add(perna);
             });
             
-            // Suporte para teclado
             const suporteGeo = new THREE.BoxGeometry(largura - 0.4, 0.03, 0.3);
             const suporteMat = new THREE.MeshStandardMaterial({ color: 0x555555 });
             const suporte = new THREE.Mesh(suporteGeo, suporteMat);
             suporte.position.set(0, 0.55, -0.2);
-            suporte.castShadow = true;
-            suporte.receiveShadow = true;
+            suporte.castShadow = true; suporte.receiveShadow = true;
             group.add(suporte);
             
             group.position.set(x, 0, z);
             return group;
         }
         
-        // Função para criar uma ilha completa com 3 computadores
-        function createIlha(x, z, corIlha, nome, nivel, ferramentas) {
+        function createIlha(x, z, corIlha, nome, nivel) {
             const group = new THREE.Group();
             
-            // Mesa principal da ilha (maior)
+            // Mesa principal da ilha (3.6 x 2.2)
             const mesaPrincipal = createMesa(0, 0, 3.6, 2.2, 0x4a2c1a);
             mesaPrincipal.position.y = 0;
             group.add(mesaPrincipal);
             
-            // Computadores (3) com posições exatas
+            // Computadores (3) na parte de trás da mesa (sentado de frente para Z negativo? Vamos colocar os computadores na borda de trás (z negativo) e cadeiras na frente (z positivo)
             const posComputadores = [
-                [-1.2, 0.8, -0.4],
-                [0, 0.8, -0.4],
-                [1.2, 0.8, -0.4]
+                [-1.2, 0.8, -0.8],  // mais recuado
+                [0, 0.8, -0.8],
+                [1.2, 0.8, -0.8]
             ];
-            
-            posComputadores.forEach((pos, i) => {
+            posComputadores.forEach(pos => {
                 const pc = createComputador(pos[0], pos[2]);
                 pc.position.y = pos[1];
                 group.add(pc);
             });
             
-            // Cadeiras (3) na frente dos computadores
+            // Cadeiras na frente (z positivo)
             const posCadeiras = [
-                [-1.2, 0, 0.6],
-                [0, 0, 0.6],
-                [1.2, 0, 0.6]
+                [-1.2, 0, 0.8],
+                [0, 0, 0.8],
+                [1.2, 0, 0.8]
             ];
-            
             posCadeiras.forEach(pos => {
                 const cadeira = createCadeira(pos[0], pos[2], corIlha);
                 cadeira.position.y = 0;
                 group.add(cadeira);
             });
             
-            // Faixa colorida na borda da mesa
+            // Faixa colorida na borda da mesa (frente)
             const faixaGeo = new THREE.BoxGeometry(3.6, 0.05, 0.1);
             const faixaMat = new THREE.MeshStandardMaterial({ color: corIlha, emissive: corIlha, emissiveIntensity: 0.2 });
             const faixa = new THREE.Mesh(faixaGeo, faixaMat);
-            faixa.position.set(0, 0.8, 1.1);
+            faixa.position.set(0, 0.8, 1.1); // borda frontal
             faixa.castShadow = true;
             group.add(faixa);
-            
-            // Placa com nome da ilha
-            const placaGeo = new THREE.BoxGeometry(0.8, 0.2, 0.05);
-            const placaMat = new THREE.MeshStandardMaterial({ color: 0x000000 });
-            const placa = new THREE.Mesh(placaGeo, placaMat);
-            placa.position.set(0, 1.0, 0);
-            placa.castShadow = true;
-            group.add(placa);
             
             group.position.set(x, 0, z);
             
@@ -683,35 +620,28 @@
             return group;
         }
         
-        // Função para criar recepção profissional
         function createRecepcao(x, z) {
             const group = new THREE.Group();
             
-            // Base elevada
             const baseGeo = new THREE.BoxGeometry(4, 0.2, 3);
             const baseMat = new THREE.MeshStandardMaterial({ color: 0x4aa3ff });
             const base = new THREE.Mesh(baseGeo, baseMat);
             base.position.y = 0.1;
-            base.castShadow = true;
-            base.receiveShadow = true;
+            base.castShadow = true; base.receiveShadow = true;
             group.add(base);
             
-            // Balcão de atendimento
             const balcaoGeo = new THREE.BoxGeometry(2.5, 1.1, 0.8);
             const balcaoMat = new THREE.MeshStandardMaterial({ color: 0xcccccc });
             const balcao = new THREE.Mesh(balcaoGeo, balcaoMat);
             balcao.position.set(-0.5, 0.65, 0.8);
-            balcao.castShadow = true;
-            balcao.receiveShadow = true;
+            balcao.castShadow = true; balcao.receiveShadow = true;
             group.add(balcao);
             
-            // Banco de espera (3 lugares)
             const bancoGeo = new THREE.BoxGeometry(2.4, 0.4, 0.6);
             const bancoMat = new THREE.MeshStandardMaterial({ color: 0xffaa33 });
             const banco = new THREE.Mesh(bancoGeo, bancoMat);
             banco.position.set(0.5, 0.3, -1);
-            banco.castShadow = true;
-            banco.receiveShadow = true;
+            banco.castShadow = true; banco.receiveShadow = true;
             group.add(banco);
             
             group.position.set(x, 0, z);
@@ -724,7 +654,6 @@
             labelDiv.style.borderRadius = '20px';
             labelDiv.style.fontWeight = 'bold';
             labelDiv.style.border = '2px solid white';
-            
             const label = new CSS2DObject(labelDiv);
             label.position.set(x + 2, 1.5, z + 1.5);
             scene.add(label);
@@ -732,41 +661,33 @@
             return group;
         }
         
-        // Função para criar gerência
         function createGerencia(x, z) {
             const group = new THREE.Group();
             
-            // Base
             const baseGeo = new THREE.BoxGeometry(3, 0.2, 3);
             const baseMat = new THREE.MeshStandardMaterial({ color: 0xffaa33 });
             const base = new THREE.Mesh(baseGeo, baseMat);
             base.position.y = 0.1;
-            base.castShadow = true;
-            base.receiveShadow = true;
+            base.castShadow = true; base.receiveShadow = true;
             group.add(base);
             
-            // Mesa executiva
             const mesa = createMesa(0, 0.3, 1.8, 1.2, 0x5d3a1a);
             mesa.position.y = 0;
             group.add(mesa);
             
-            // Computador
             const pc = createComputador(0, 0.3);
             pc.position.y = 0.8;
             group.add(pc);
             
-            // Cadeira executiva
             const cadeira = createCadeira(0, -0.3, 0xffaa33);
             cadeira.position.y = 0;
             group.add(cadeira);
             
-            // Arquivo
             const arquivoGeo = new THREE.BoxGeometry(0.8, 1.5, 0.6);
             const arquivoMat = new THREE.MeshStandardMaterial({ color: 0x666666 });
             const arquivo = new THREE.Mesh(arquivoGeo, arquivoMat);
             arquivo.position.set(1, 0.75, -1);
-            arquivo.castShadow = true;
-            arquivo.receiveShadow = true;
+            arquivo.castShadow = true; arquivo.receiveShadow = true;
             group.add(arquivo);
             
             group.position.set(x, 0, z);
@@ -779,7 +700,6 @@
             labelDiv.style.borderRadius = '20px';
             labelDiv.style.fontWeight = 'bold';
             labelDiv.style.border = '2px solid white';
-            
             const label = new CSS2DObject(labelDiv);
             label.position.set(x + 1.5, 1.8, z + 1.5);
             scene.add(label);
@@ -787,26 +707,31 @@
             return group;
         }
         
-        // ==================== POSICIONAMENTO DOS ELEMENTOS ====================
+        // ==================== POSICIONAMENTO DOS ELEMENTOS (ESCALA REAL) ====================
         
-        // Recepção (entrada, lado esquerdo)
-        scene.add(createRecepcao(0.5, 1.5));
+        // Recepção (canto inferior esquerdo, encostada na parede esquerda e frontal)
+        scene.add(createRecepcao(2.0, 1.5));  // centro em x=2 (ocupa de 0 a 4), z=1.5 (0 a 3)
         
-        // Gerência (entrada, lado direito)
-        scene.add(createGerencia(6.5, 1.5));
+        // Gerência (canto inferior direito, encostada na parede direita)
+        scene.add(createGerencia(8.5, 1.5));  // centro em x=8.5 (ocupa de 7 a 10), z=1.5 (0 a 3)
         
-        // Ilhas (distribuídas na área principal)
-        // Ilha 1 - Fundamental (vermelha)
-        scene.add(createIlha(2, 5, 0xff6b6b, 'ILHA 01', 'FUNDAMENTAL', '📝📊🎨'));
+        // Ilhas distribuídas com corredores adequados
+        // Espaçamentos: laterais 0.8m, entre ilhas 1.2m, corredor frontal 1.5m após recepção, entre fileiras 1.5m
+        // Fileira 1 (mais próxima da recepção) com centros em Z = 3.5 (após parede) + 1.5 (corredor) + 1.1 (metade profundidade) = 3.5+1.5+1.1 = 6.1
+        // Fileira 2 (fundo) com centros em Z = 6.1 + 2.2 + 1.5 = 9.8
         
-        // Ilha 2 - Intermediário (verde)
-        scene.add(createIlha(6, 5, 0x6bff6b, 'ILHA 02', 'INTERMEDIÁRIO', '📝📊🎨🐙'));
+        // Posições X para as ilhas: esquerda e direita
+        // Centro esquerda: 0.8 + 1.8 = 2.6
+        // Centro direita: 0.8 + 3.6 + 1.2 + 1.8 = 7.4
         
-        // Ilha 3 - Avançado (azul)
-        scene.add(createIlha(2, 9, 0x6b6bff, 'ILHA 03', 'AVANÇADO', '🐙▲🤖'));
-        
-        // Ilha 4 - Projetos (rosa)
-        scene.add(createIlha(6, 9, 0xff6bff, 'ILHA 04', 'PROJETOS', '🐙▲🤖📚'));
+        // Ilha 1 - Fundamental (vermelha) - fileira 1, esquerda
+        scene.add(createIlha(2.6, 6.1, 0xff6b6b, 'ILHA 01', 'FUNDAMENTAL'));
+        // Ilha 2 - Intermediário (verde) - fileira 1, direita
+        scene.add(createIlha(7.4, 6.1, 0x6bff6b, 'ILHA 02', 'INTERMEDIÁRIO'));
+        // Ilha 3 - Avançado (azul) - fileira 2, esquerda
+        scene.add(createIlha(2.6, 9.8, 0x6b6bff, 'ILHA 03', 'AVANÇADO'));
+        // Ilha 4 - Projetos (rosa) - fileira 2, direita
+        scene.add(createIlha(7.4, 9.8, 0xff6bff, 'ILHA 04', 'PROJETOS'));
         
         // ==================== FUNÇÕES DE CONTROLE GLOBAIS ====================
         window.resetCamera = function() {
@@ -848,23 +773,17 @@
         // ==================== ANIMAÇÃO E ATUALIZAÇÕES ====================
         function animate() {
             requestAnimationFrame(animate);
-            
             controls.update();
             
-            // Atualizar display de medidas
             const distEntrada = camera.position.length();
             document.getElementById('cam-dist').textContent = distEntrada.toFixed(1);
             
-            // Calcular distância até a ilha mais próxima (simplificado)
-            const ilhaPos = [2,5,6,5,2,9,6,9];
+            const ilhaPos = [2.6,6.1, 7.4,6.1, 2.6,9.8, 7.4,9.8];
             const camX = camera.position.x;
             const camZ = camera.position.z;
             let minDist = 100;
             for (let i = 0; i < ilhaPos.length; i+=2) {
-                const dist = Math.sqrt(
-                    Math.pow(camX - ilhaPos[i], 2) + 
-                    Math.pow(camZ - ilhaPos[i+1], 2)
-                );
+                const dist = Math.sqrt(Math.pow(camX - ilhaPos[i], 2) + Math.pow(camZ - ilhaPos[i+1], 2));
                 if (dist < minDist) minDist = dist;
             }
             document.getElementById('ilha-dist').textContent = minDist.toFixed(1);
@@ -875,7 +794,6 @@
         
         animate();
         
-        // ==================== RESIZE ====================
         window.addEventListener('resize', onWindowResize, false);
         function onWindowResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
@@ -884,7 +802,7 @@
             labelRenderer.setSize(window.innerWidth, window.innerHeight);
         }
         
-        console.log('🏢 Projeto Arquitetônico carregado com precisão!');
+        console.log('🏢 Projeto Arquitetônico carregado com escala real!');
     </script>
 </body>
 </html>
